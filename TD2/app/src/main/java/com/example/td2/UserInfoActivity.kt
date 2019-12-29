@@ -83,6 +83,9 @@ class UserInfoActivity : AppCompatActivity() {
 
 // Pour récupérer le bitmap dans onActivityResult
         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
+
+
+
     }
 
     companion object {
@@ -93,7 +96,7 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
 
-    private fun handlePhotoTaken(data: Intent?) {
+    private suspend fun handlePhotoTaken(data: Intent?) {
         val image = data?.extras?.get("data") as? Bitmap
         // Afficher l'image ici
 
@@ -102,7 +105,7 @@ class UserInfoActivity : AppCompatActivity() {
 
         Glide.with(this).load(imageBody).into(image_view)
 
-        //userService.updateAvatar(avatar)
+        userService.updateAvatar(avatar = imageBody)
 
 
     }
