@@ -2,13 +2,24 @@ package com.example.td2
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.example.td2.network.API.userService
 import kotlinx.android.synthetic.main.activity_user_info.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 class UserInfoActivity : AppCompatActivity() {
 
@@ -18,6 +29,9 @@ class UserInfoActivity : AppCompatActivity() {
 
         take_picture_button.setOnClickListener(){
             askCameraPermissionAndOpenCamera()
+        }
+        upload_image_button.setOnClickListener(){
+            openGallery(data = null)
         }
     }
 
@@ -57,16 +71,58 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
-        // On va utiliser un Intent implicite
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+    }
+
+    private fun openGallery(data :Intent?){
+        // Pour ouvrir la gallerie:
+        val galleryIntent = Intent(Intent.ACTION_PICK)
+        galleryIntent.type = "image/*"
+        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
+
+// Pour récupérer le bitmap dans onActivityResult
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
     }
 
     companion object {
         const val CAMERA_PERMISSION_CODE = 42
+        const val CAMERA_REQUEST_CODE = 2001
+        const val GALLERY_REQUEST_CODE = 100
+
     }
 
 
-    /*override fun onRequestPermissionsResult() {
-        if (requestCode == CAMERA_PERMISSION_CODE && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
+    private fun handlePhotoTaken(data: Intent?) {
+        val image = data?.extras?.get("data") as? Bitmap
+        // Afficher l'image ici
 
-    }*/
+        val imageBody = imageToBody(image)
+        // Plus tard, on l'enverra au serveur
+
+        Glide.with(this).load(imageBody).into(image_view)
+
+        //userService.updateAvatar(avatar)
+
+
+    }
+
+    // Celle ci n'est pas très intéressante à lire
+// En gros, elle lit le fichier et le prépare pour l'envoi HTTP
+    private fun imageToBody(image: Bitmap?): MultipartBody.Part {
+        val f = File(cacheDir, "tmpfile.jpg")
+        f.createNewFile()
+        try {
+            val fos = FileOutputStream(f)
+            image?.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.flush()
+            fos.close()
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val body = RequestBody.create(MediaType.parse("image/png"), f)
+        return MultipartBody.Part.createFormData("avatar", f.path, body)
+    }
 }
