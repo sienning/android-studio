@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.example.td2.network.API.userService
 import kotlinx.android.synthetic.main.activity_user_info.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -31,6 +32,9 @@ class UserInfoActivity : AppCompatActivity() {
 
         take_picture_button.setOnClickListener(){
             askCameraPermissionAndOpenCamera()
+        }
+        upload_image_button.setOnClickListener(){
+            openGallery(data = null)
         }
     }
 
@@ -70,13 +74,28 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
-        // On va utiliser un Intent implicite
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
     }
 
+    private fun openGallery(data :Intent?){
+        // Pour ouvrir la gallerie:
+        val galleryIntent = Intent(Intent.ACTION_PICK)
+        galleryIntent.type = "image/*"
+        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
+
+// Pour récupérer le bitmap dans onActivityResult
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
+
+
+
+    }
+
     companion object {
         const val CAMERA_PERMISSION_CODE = 42
+        const val CAMERA_REQUEST_CODE = 2001
+        const val GALLERY_REQUEST_CODE = 100
+
     }
 
 
