@@ -57,10 +57,7 @@ class UserInfoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         //Glide.with(this).load("https://goo.gl/gEgYUd").into(image_view)
-
-
     }
 
     private fun askCameraPermissionAndOpenCamera() {
@@ -139,10 +136,6 @@ class UserInfoActivity : AppCompatActivity() {
 
         val imageBody = imageToBody(image)
         // Plus tard, on l'enverra au serveur
-
-        Toast.makeText(this, "Hello", Toast.LENGTH_LONG).show()
-
-
         //userService.updateAvatar(avatar = imageBody)
     }
 

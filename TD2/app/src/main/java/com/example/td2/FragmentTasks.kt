@@ -2,17 +2,21 @@ package com.example.td2
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.td2.network.API
 import com.example.td2.network.API.userService
 import com.example.td2.network.UserService
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -59,16 +63,24 @@ class FragmentTasks : Fragment() {
     }
 
 
-
     override fun onResume() {
         super.onResume()
+
+
+
+        //val userInfo = API.userService.getInfo().body()!!
+
+        //my_text_view.text = "${userInfo.firstName} ${userInfo.lastName}"
+
         val glide = Glide.with(this)
+
         lifecycleScope.launch {
-            val userInfo = userService.getInfo()
-            glide.load(userInfo).apply(RequestOptions.circleCropTransform()).into(imageView)
+            //val userInfo = userService.getInfo().body()!!
+            //val userInfo = userService.getInfo().body()!!
+            //glide.load(userInfo.avatar).into(imageView)
         }
 
-        //Glide.with(this).load("https://goo.gl/gEgYUd").apply(RequestOptions.circleCropTransform()).into(imageView)
+        Glide.with(this).load("https://goo.gl/gEgYUd").apply(RequestOptions.circleCropTransform()).into(imageView)
         viewModel.loadTasks()
     }
 
