@@ -8,11 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.td2.network.API.userService
+import com.example.td2.network.UserService
 import kotlinx.android.synthetic.main.fragment_tasks.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -58,8 +62,13 @@ class FragmentTasks : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        val glide = Glide.with(this)
+        lifecycleScope.launch {
+            val userInfo = userService.getInfo()
+            glide.load(userInfo).apply(RequestOptions.circleCropTransform()).into(imageView)
+        }
 
-        Glide.with(this).load("https://goo.gl/gEgYUd").apply(RequestOptions.circleCropTransform()).into(imageView)
+        //Glide.with(this).load("https://goo.gl/gEgYUd").apply(RequestOptions.circleCropTransform()).into(imageView)
         viewModel.loadTasks()
     }
 

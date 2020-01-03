@@ -9,9 +9,9 @@ import retrofit2.http.Part
 
 interface UserService {
     @GET("users/info")
-    suspend fun getInfo(): Response<UserInfo>
+    fun getInfo(): Response<UserInfo>
 
     @Multipart
     @PATCH("users/update_avatar")
-    suspend fun updateAvatar(@Part avatar: MultipartBody.Part): Response<UserInfo>
+    fun updateAvatar(@Part avatar: MultipartBody.Part): Response<UserInfo>
 }
